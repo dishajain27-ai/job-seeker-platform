@@ -3,9 +3,9 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure uploads directory exists
-const isVercel = !!process.env.VERCEL;
-const uploadDir = isVercel ? '/tmp' : path.join(__dirname, '../uploads');
-if (!isVercel && !fs.existsSync(uploadDir)) {
+const isServerless = !!(process.env.VERCEL || process.env.FIREBASE_CONFIG || process.env.FUNCTIONS_EMULATOR);
+const uploadDir = isServerless ? '/tmp' : path.join(__dirname, '../uploads');
+if (!isServerless && !fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 

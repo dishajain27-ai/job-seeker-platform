@@ -20,7 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Set static folder for uploaded resumes
-const uploadPath = process.env.VERCEL ? '/tmp' : path.join(__dirname, 'uploads');
+const isServerless = !!(process.env.VERCEL || process.env.FIREBASE_CONFIG || process.env.FUNCTIONS_EMULATOR);
+const uploadPath = isServerless ? '/tmp' : path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadPath));
 
 // Mount routers
@@ -95,7 +96,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 let server;
-if (!process.env.VERCEL) {
+if (require.main === module) {
   server = app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });
